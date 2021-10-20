@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+
+import csv
+import click
+import json
+import json_merge_patch
+
+
+@click.command()
+@click.argument("file")
+@click.option("-s", "--schema")
+def spreadsheet_to_schema(file, schema=None):
+
+    output = {}
+    with open(file, newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        for line in reader:
+            split_path = line["path"].split(".")
+            current_location = output
+
+            for part in split_path:
+                if not part:
+                    continue
+                if part == "p":
+                    part = "properties"
+                if part == "i":
+                    part = "items"
+                if part == "d":
+                    part = "definitions"
+
+                prev_location = current_location
+                new_location = current_location.get(part)
+                if not new_location:
+                    new_location = current_location[part] = {}
+                current_location = new_location
+
+            if line.get("remove"):
+                prev_location[split_path[-1]] = None
+                continue
+
+            type = line.get("type")
+            if type:
+                current_location["type"] = type.split(",")
+                if len(current_location["type"]) == 1:
+                    current_location["type"] = type
+
+            title = line.get("title")
+            if title:
+                current_location["title"] = title
+
+            format = line.get("format")
+            if format:
+                current_location["format"] = format
+
+            description = line.get("description")
+            if description:
+                current_location["description"] = description
+
+            codelist = line.get("codelist")
+            if codelist:
+                current_location["codelist"] = codelist
+
+            enum = line.get("enum")
+            if enum:
+                current_location["enum"] = enum.split(",")
+
+            required = line.get("required")
+            if required:
+                current_location["required"] = required.split(",")
+
+            minItems = line.get("minItems")
+            if minItems:
+                current_location["minItems"] = int(minItems)
+
+            minProperties = line.get("minProperties")
+            if minProperties:
+                current_location["minProperties"] = int(minProperties)
+
+            ref = line.get("ref")
+            if ref:
+                current_location["$ref"] = ref
+
+    if not schema:
+        print(json.dumps(output, ensure_ascii=False, indent=2, separators=(",", ": ")))
+        return
+
+    with open(schema) as schema_fd:
+        schema_data = json.load(schema_fd)
+
+    merged = json_merge_patch.merge(schema_data, output)
+
+    with open(schema, "w+") as schema_fd:
+        schema_fd.write(json.dumps(merged, ensure_ascii=False, indent=2, separators=(",", ": ")))
+        schema_fd.write("\n")
+
+
+if __name__ == "__main__":
+    spreadsheet_to_schema()
+

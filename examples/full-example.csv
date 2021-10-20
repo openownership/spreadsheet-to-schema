@@ -1,0 +1,26 @@
+path,title,description,type,enum,minItems,minProperties,required,ref,codelist,format,Notes
+d.PublicListing,Public listing,"Details of a publicly listed company, its securities (shares and other tradable financial instruments related to the entity), and related regulatory filings.",object,,,1,"securitiesListings,hasPublicListing",,,,Type: object
+d.PublicListing.p.hasPublicListing,Has public listing,This value MUST be true if the entity is known to be a publicly listed company.,boolean,,,,,,,,
+d.PublicListing.p.companyFilingsURLs,Company filings URLs,"URL or URLs where regulatory filings related to major holdings can be retrieved. URLs may point to pages maintained by regulatory bodies, stock exchanges or by the company itself.",array,,,,,,,uri,Type: string array
+d.PublicListing.p.companyFilingsURLs.i,,,string,,,,,,,,type:array
+d.PublicListing.p.securitiesListings,Securities listings,"Details of the entity’s securities and the public exchanges and markets on which they are traded. All equity securities SHOULD BE listed here, plus any other securities from which beneficial ownership might be derived. Where a security is traded on more than one market, there SHOULD BE an entry for each market (or market segment).",array,,,,,,,,"Type: object array
+
+Required (I think it's too much to set minItems to 1, though)"
+d.PublicListing.p.securitiesListings.i,Securities listing,Details of a security and the market on which it is traded.,,,,,,#/definitions/SecuritiesListing,,,Type: object
+d.SecuritiesListing,Securities listing,Details of a security and the market on which it is traded.,object,,,,"stockExchangeJurisdiction,security,stockExchangeName",,,,
+d.SecuritiesListing.p.marketIdentifierCode,Market Identifier Code (MIC),"The Market Identifier Code (MIC) of the market on which the security is traded. Where the security is traded on a segment of an exchange, this is the MIC of the segment. Where it is traded on the main exchange, this is the MIC of the main exchange and MUST match the `operatingMarketIdentifierCode`. MICs are allocated and managed under ISO standard 10383.",string,,,,,,,,Type: string (ideally a valid MIC under ISO 10383)
+d.SecuritiesListing.p.operatingMarketIdentifierCode,Operating Market Identifier Code (Operating MIC),"The Market Identifier Code (MIC) of the main exchange or trading platform handling trades in this security. Where the security is traded on a segment of an exchange, this is the MIC of the parent exchange or trading platform. Where it is traded on the main exchange, this is the MIC of that main exchange and MUST match the `marketIdentifierCode`. MICs are allocated and managed under ISO standard 10383.",string,,,,,,,,Type: string (ideally a valid MIC under ISO 10383)
+d.SecuritiesListing.p.stockExchangeJurisdiction,Stock exchange jurisdiction,"The 2-Digit country code (ISO 3166-2) of the jurisdiction under which the exchange, market or trading platform is regulated.",string,,,,,,,,"Type: string (ideally a valid ISO 3166-2 value)
+
+Required"
+d.SecuritiesListing.p.stockExchangeName,Stock exchange name,"The name of the exchange, market or trading platform on which the security is traded. If the security is traded on a segment of the exchange, then the name SHOULD include both elements. For example, 'London Stock Exchange - MTF'.",string,,,,,,,,"Type: string
+
+Required"
+d.SecuritiesListing.p.security,Security,Identifying information of the stock or other security.,object,,,,ticker,,,,"Type: object
+
+Required"
+d.SecuritiesListing.p.security.p.idScheme,Identifier scheme,"The scheme under which the security has been issued a unique, persistent identifier. For accepted schemas, see the securitiesIdentifierSchemes codelist.",string,"isin,figi,cusip,cins",,,,,securitiesIdentifierSchemes.csv,,Type: enum/string (from codelist)
+d.SecuritiesListing.p.security.p.id,Identifier,The unique identifier of the security as issued under the `idScheme`.,string,,,,,,,,Type: string
+d.SecuritiesListing.p.security.p.ticker,Stock ticker,The stock ticker identifying this security on the named stock exchange.,string,,,,,,,,"Type: string
+
+Required"
