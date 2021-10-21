@@ -24,15 +24,15 @@ If you want merge the output schema to an existing JSONSchema file:
 
 The spreadheet should look something like the following:
 
-|path                |title      |description           |type  |
-|--------------------|-----------|----------------------|------|
-|                    |rootobj    |myrootdescription     |object|
-|p.myobject          |myobejct   |mydescription         |object|
-|p.mystring          |mytitle2   |mydescription2        |string|
-|myobject.p.substring|mysubstring|mysubstringdescription|object|
+|path                  |title      |description           |type  |
+|----------------------|-----------|----------------------|------|
+|                      |rootobj    |myrootdescription     |object|
+|p.myobject            |myobejct   |mydescription         |object|
+|p.mystring            |mytitle2   |mydescription2        |string|
+|p.myobject.p.substring|mysubstring|mysubstringdescription|string|
 
 
-This will represent JSONSchema
+This will represent the following JSONSchema:
 
 ```
 {
@@ -40,27 +40,26 @@ This will represent JSONSchema
   "title": "rootobj",
   "description": "myrootdescription",
   "properties": {
-    "myobject": {
-      "type": "object",
-      "title": "myobejct",
-      "description": "mydescription"
-    },
     "mystring": {
       "type": "string",
       "title": "mytitle2",
       "description": "mydescription2"
-    }
-  },
-  "myobject": {
-    "properties": {
-      "substring": {
-        "type": "object",
-        "title": "mysubstring",
-        "description": "mysubstringdescription"
+    },
+    "myobject": {
+      "type": "object",
+      "title": "myobejct",
+      "description": "mydescription",
+      "properties": {
+        "substring": {
+          "type": "string",
+          "title": "mysubstring",
+          "description": "mysubstringdescription"
+        }
       }
     }
   }
 }
+
 ```
 
 ### The Path 
@@ -69,9 +68,9 @@ The path heading is required in the spreadsheet; all other headings are optional
 
 The path specifies where the JSONSchema object should exist and the other headings say what JSONSchema properties live at that path.
 
-An empty path represents the root of the JSONSchmema object. It will typically be of type `object` and contain properties.
+An empty path represents the root of the JSONSchmema object. It will typically be of type `object` and contain a `properties` key.
 
-The path is seperated by `.` seperators. Each `.` represents a new sub object in the JSON. 
+The path is seperated by `.` seperators. Each `.` represents a new sub-object in the JSON. 
 
 There are some shortcuts to common parts of the path within JSONSchema:
 
@@ -84,6 +83,7 @@ There are some shortcuts to common parts of the path within JSONSchema:
 
 Each column needs a heading. The following headings are supported:
 
+* `path`: required, described above
 * `type`: type filed in JSONSchemad e.g object, string, array
 * `title`: title field
 * `format`: format field
@@ -94,6 +94,12 @@ Each column needs a heading. The following headings are supported:
 * `minItems`: minItems field
 * `minProperties`: minItems field
 * `ref`: ref field
+
+## Considerations
+
+* Any extra column heading is the CSV will be ignored, so could be used for notes not intended for the schema.
+* No validitity checking is done on the output JSONSchema so care needs to be made when defining the paths to make sure they are valid.  
+* A good understanding of JSONSchema is needed to define the paths and fields correctly, some properties will not make sense at certain paths.
 
 ## Examples
 

@@ -1,5 +1,5 @@
 path,title,description,type
 ,rootobj,myrootdescription,object
-p.myobject,myobejct,mydescription,object
 p.mystring,mytitle2,mydescription2,string
-myobject.p.substring,mysubstring,mysubstringdescription,object
+p.myobject,myobejct,mydescription,object
+p.myobject.p.substring,mysubstring,mysubstringdescription,string
